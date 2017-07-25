@@ -11,3 +11,5 @@ This uses Python 3 and the following modules:-
   pytube
 
   re
+  
+  BeautifulSoup
