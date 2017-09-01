@@ -13,3 +13,5 @@ This uses Python 3 and the following modules:-
   re
   
   BeautifulSoup
+
+  Note: This is still a project in development. Hence it won't work.
