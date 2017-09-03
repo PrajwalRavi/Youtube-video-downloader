@@ -9,7 +9,7 @@ class GetByName:
 
     def __init__(self,name, location):
 
-        self.res=[]
+
         self.name= name
         self.dow_loc= location
         self.vid_url= None
@@ -30,17 +30,37 @@ class GetByName:
             self.vids.append(v["title"])
             self.urls.append("https://www.youtube.com"+v["href"])
 
-        i=0
+        l=Label(master, text = "Choose one of the following:")
+        i=1
         for v in self.vids:
             Radiobutton(master, text=v, variable=self.opt, value=i).grid(row=i, sticky=W)
             i+=1
-        Button(text="OKAY", command=lambda: self.get_res(i,master)).grid(row=i)
+
+        l.grid(row=0)
+        Button(text="OKAY", command=lambda: self.get_res(master)).grid(row=i)
         master.mainloop()
 
-    def get_res(self, r, master):
+    def get_res(self, master):
         master.destroy()
         self.vid_url= self.urls[self.opt.get()]
-        print(self.vid_url)
+        yt=YouTube(self.vid_url)
+        resolutions=yt.get_videos()
+
+        root=Tk()
+        self.res = StringVar()
+        l=Label(root, text="Choose resolution:")
+        b=Button(root, text="Download", command = lambda : root.destroy())
+
+        r_num=1
+        for r in resolutions:
+            but=Radiobutton(root, text=r, variable=self.res, value=r)
+            but.grid(row=r_num, sticky=W)
+            r_num+=1
+
+        l.grid(row=0)
+        b.grid(row=r_num)
+        root.mainloop()
+
 
 
 def main():
