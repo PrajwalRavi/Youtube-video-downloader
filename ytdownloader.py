@@ -13,7 +13,7 @@ class Gui:
 		self.master=root
 		self.dow_loc=StringVar()
 		self.dow_loc.set("/home/prajwal/Desktop/Downloads")
-		self.mode="Name"
+		self.mode=StringVar()
 		self.vid= None
 
 	def get_mode(self):
@@ -21,7 +21,6 @@ class Gui:
 		master=self.master
 		self.vid = StringVar()
 		option_list = ("Name", "URL")
-		self.mode = StringVar()
 		self.mode.set("Name")
 
 		label1 = Label(master, text="Search by: ")
