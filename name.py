@@ -1,6 +1,4 @@
-from collections import __main__
 from tkinter import *
-from tkinter import filedialog
 from pytube import YouTube
 import requests
 from bs4 import BeautifulSoup
@@ -17,6 +15,7 @@ class GetByName:
         self.opt = IntVar()
         self.vids = []
         self.urls = []
+
 
     def get_vids(self):
 
@@ -40,7 +39,9 @@ class GetByName:
         Button(text="OKAY", command=lambda: self.get_res(master)).grid(row=i)
         master.mainloop()
 
+
     def get_res(self, master):
+
         master.destroy()
         self.vid_url= self.urls[self.opt.get()]
         yt=YouTube(self.vid_url)
@@ -67,6 +68,7 @@ def main():
 
     obj= GetByName("lean on", "/")
     obj.get_vids()
+    obj.get_res()
 
 if __name__=="__main__":
     main()
