@@ -6,6 +6,7 @@ import re
 
 import ytdownloader
 import name
+import url
 
 def main():
 
@@ -23,7 +24,8 @@ def main():
     else:
 
         obj = url.GetByUrl(gui_obj.vid.get(), gui_obj.dow_loc)
-        obj.get_vids()
+        obj.get_res()
+        download(obj)
 
 
 

@@ -29,14 +29,15 @@ class GetByName:
             self.vids.append(v["title"])
             self.urls.append("https://www.youtube.com"+v["href"])
 
-        l=Label(master, text = "Choose one of the following:")
+        l=Label(master, text = "Choose one of the following:", font= ("Times", "20", "italic"))
         i=1
         for v in self.vids:
             Radiobutton(master, text=v, variable=self.opt, value=i).grid(row=i, sticky=W)
             i+=1
 
         l.grid(row=0)
-        Button(text="OKAY", command=lambda: self.get_res(master)).grid(row=i)
+        b = Button(text="OKAY", command=lambda: self.get_res(master), font= ("Times", "20", "bold italic"))
+        b.grid(row=i)
         master.mainloop()
 
 
@@ -49,8 +50,8 @@ class GetByName:
 
         root=Tk()
         self.res = StringVar()
-        l=Label(root, text="Choose resolution:")
-        b=Button(root, text="Download", command = lambda : root.destroy())
+        l=Label(root, text="Choose resolution:", font= ("Times", "20", "italic"))
+        b=Button(root, text="Download", command = lambda : root.destroy(), font= ("Times", "20", "bold italic"))
 
         r_num=1
         for r in resolutions:

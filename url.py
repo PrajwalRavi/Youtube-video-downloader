@@ -1,8 +1,5 @@
 from tkinter import *
 from pytube import YouTube
-import requests
-from bs4 import BeautifulSoup
-
 
 class GetByUrl:
 
@@ -19,8 +16,8 @@ class GetByUrl:
 
         root=Tk()
         self.res = StringVar()
-        l=Label(root, text="Choose resolution:")
-        b=Button(root, text="Download", command = lambda : root.destroy())
+        l=Label(root, text="Choose resolution:", font= ("Times", "20", "italic"))
+        b=Button(root, text="Download", command = lambda : root.destroy(), font= ("Times", "20", "bold italic"))
 
         r_num=1
         for r in resolutions:
