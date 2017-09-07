@@ -28,6 +28,7 @@ class GetByUrl:
         resolutions = yt.get_videos()
 
         root = Tk()
+        root.title("Select any one")
         self.res = StringVar()
         l = Label(root, text="Choose resolution:", font=("Times", "20", "italic"))
         b = Button(root, text="Download", command=lambda: root.destroy(), font=("Times", "20", "bold italic"))

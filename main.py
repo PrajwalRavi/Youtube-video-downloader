@@ -3,7 +3,6 @@ from tkinter import ttk
 from tkinter import messagebox
 from gi.repository import Notify
 import re
-import sys
 import threading
 import os
 import time
@@ -43,10 +42,16 @@ class DownloadThread(threading.Thread):
 
         yt = YouTube(self.url)
         video = yt.get(self.format, self.res)
-        video.download(self.loc)
-        show_noti(yt.filename)
-        time.sleep(0.5)  # required so that program does not exit before displaying the desktop notification.
-        os._exit(0)  # exits the whole program.
+        try:
+            video.download(self.loc)
+            show_noti(yt.filename)
+            time.sleep(0.5)  # required so that program does not exit before displaying the desktop notification.
+            os._exit(0)  # exits the whole program.
+
+        except OSError:
+            messagebox.showerror("Error", "Video already present in the folder.")
+            os._exit(0)
+
 
 
 def main():
@@ -64,25 +69,17 @@ def main():
     gui_obj.get_mode()
     root1.mainloop()
 
-    if gui_obj.vid.get()=="":
-        root = Tk()
-        root.title("Error")
-        Label(text="Please enter video name or URL", font=("Times", "24")).grid(row=0)
-        Button(text="Okay", command = lambda : sys.exit(0), font=("Times", "23", "bold")).grid(row=1, column=0)
-        root.mainloop()
+    if gui_obj.mode.get() == "Name":
+
+        obj = name.GetByName(gui_obj.vid.get(), gui_obj.dow_loc)
+        obj.get_vids()
+        download(obj)
 
     else:
-        if gui_obj.mode.get() == "Name":
 
-            obj = name.GetByName(gui_obj.vid.get(), gui_obj.dow_loc)
-            obj.get_vids()
-            download(obj)
-
-        else:
-
-            obj = url.GetByUrl(gui_obj.vid.get(), gui_obj.dow_loc)
-            obj.get_res()
-            download(obj)
+        obj = url.GetByUrl(gui_obj.vid.get(), gui_obj.dow_loc)
+        obj.get_res()
+        download(obj)
 
 
 def download(obj):
@@ -103,8 +100,9 @@ def download(obj):
     root = Tk()
     root.title("Downloading :)")
     pb = ttk.Progressbar(root, orient='horizontal', length=300, mode='indeterminate')
-    pb.pack()
+    pb.grid(row=0)
     pb.start()  # starts the progress bar
+    Button(text="Cancel", command= lambda :os._exit(0)).grid(row=1)
     root.mainloop()
 
 

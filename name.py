@@ -37,6 +37,7 @@ class GetByName:
         """
 
         master = self.master
+        master.title("Select any one")
         url = "https://www.youtube.com/results?search_query=" + self.name
         r = requests.get(url)
         soup = BeautifulSoup(r.content, "lxml")
@@ -48,7 +49,7 @@ class GetByName:
 
         l = Label(master, text="Choose one of the following:", font=("Times", "20", "italic"))
         l.grid(row=0)
-        i = 1
+        i = 1   # i :- row number
         for v in self.vids:
             Radiobutton(master, text=v, variable=self.opt, value=i).grid(row=i, sticky=W)
             i += 1

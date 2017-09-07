@@ -27,6 +27,7 @@ class Gui:
         """
 
         master = self.master
+        master.title("Enter options")
         self.vid = StringVar()
         option_list = ("Name", "URL")
         self.mode.set("Name")
