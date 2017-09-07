@@ -21,7 +21,6 @@ class Gui:
         self.dow_loc = StringVar()
         self.dow_loc.set("/home/prajwal/Downloads")     #This depends on your user name and Operating System
         self.mode = StringVar()
-        self.vid = None
 
     def get_mode(self):
         """Defines all the widgets in the master window using the modules in tkinter package.

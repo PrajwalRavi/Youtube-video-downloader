@@ -1,7 +1,9 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 from gi.repository import Notify
 import re
+import sys
 import threading
 import os
 import time
@@ -62,17 +64,25 @@ def main():
     gui_obj.get_mode()
     root1.mainloop()
 
-    if gui_obj.mode.get() == "Name":
-
-        obj = name.GetByName(gui_obj.vid.get(), gui_obj.dow_loc)
-        obj.get_vids()
-        download(obj)
+    if gui_obj.vid.get()=="":
+        root = Tk()
+        root.title("Error")
+        Label(text="Please enter video name or URL", font=("Times", "24")).grid(row=0)
+        Button(text="Okay", command = lambda : sys.exit(0), font=("Times", "23", "bold")).grid(row=1, column=0)
+        root.mainloop()
 
     else:
+        if gui_obj.mode.get() == "Name":
 
-        obj = url.GetByUrl(gui_obj.vid.get(), gui_obj.dow_loc)
-        obj.get_res()
-        download(obj)
+            obj = name.GetByName(gui_obj.vid.get(), gui_obj.dow_loc)
+            obj.get_vids()
+            download(obj)
+
+        else:
+
+            obj = url.GetByUrl(gui_obj.vid.get(), gui_obj.dow_loc)
+            obj.get_res()
+            download(obj)
 
 
 def download(obj):
