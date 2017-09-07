@@ -16,6 +16,12 @@ import url
 class DownloadThread(threading.Thread):
     """Class that defines the thread that downloads the video in the background.
     The class object takes the video resolution, format and download location as parmeters for the constructor.
+
+    Attributes:-
+        url : URL of the video
+        loc : Download location of the video
+        res : Resolution of the video
+        format : Format(mp4, mpeg etc) of the video
     """
 
     def __init__(self, url, loc, res, format):
@@ -29,6 +35,7 @@ class DownloadThread(threading.Thread):
 
     def run(self):
         """Starting point of the thread.
+
         This method that overrides the run() method in Thread class.
         """
 
@@ -36,8 +43,8 @@ class DownloadThread(threading.Thread):
         video = yt.get(self.format, self.res)
         video.download(self.loc)
         show_noti(yt.filename)
-        time.sleep(0.5)         #required so that program does not exit before displaying the desktop notification.
-        os._exit(0)             #exits the whole program.
+        time.sleep(0.5)  # required so that program does not exit before displaying the desktop notification.
+        os._exit(0)  # exits the whole program.
 
 
 def main():
@@ -75,9 +82,9 @@ def download(obj):
     Meanwhile, the main thread displays the progress bar created using tkinter.ttk until the video download is complete.
     """
 
-    format = re.search("\(\S+\)", obj.res.get()).group()            #uses regular expressions
+    format = re.search("\(\S+\)", obj.res.get()).group()  # uses regular expressions
     format = format[2:-1]
-    resolution = re.search("-\s\S+p", obj.res.get()).group()        #uses regular expressions
+    resolution = re.search("-\s\S+p", obj.res.get()).group()  # uses regular expressions
     resolution = resolution[2:]
 
     download_thread = DownloadThread(obj.vid_url, obj.dow_loc.get(), resolution, format)
@@ -87,7 +94,7 @@ def download(obj):
     root.title("Downloading :)")
     pb = ttk.Progressbar(root, orient='horizontal', length=300, mode='indeterminate')
     pb.pack()
-    pb.start()                          #starts the progress bar
+    pb.start()  # starts the progress bar
     root.mainloop()
 
 
@@ -104,5 +111,4 @@ def show_noti(filename):
 
 
 if __name__ == "__main__":
-
     main()

@@ -19,7 +19,7 @@ class Gui:
 
         self.master = root
         self.dow_loc = StringVar()
-        self.dow_loc.set("/home/prajwal/Downloads")     #Change this for Windows/Mac
+        self.dow_loc.set("/home/prajwal/Downloads")     #This depends on your user name and Operating System
         self.mode = StringVar()
         self.vid = None
 
