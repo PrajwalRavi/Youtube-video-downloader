@@ -1,8 +1,9 @@
 from tkinter import *
+from tkinter import ttk
 from pytube import YouTube
 import requests
 from bs4 import BeautifulSoup
-
+import time
 
 class GetByName:
     """This class is used when the user wishes to search a video by it's name.
@@ -21,11 +22,12 @@ class GetByName:
 
         self.name = name
         self.dow_loc = location
-        self.vid_url = None
         self.master = Tk()
-        self.opt = IntVar()
-        self.vids = []
-        self.urls = []
+        self.vid_url = None
+        self.vid_urls = []
+        self.playlists = []
+        self.pl_urls = []
+        self.pl_url = None
 
     def get_vids(self):
         """Scrapes the YouTube search results(based in user's query), extracts the video names from them and stores them
@@ -35,25 +37,53 @@ class GetByName:
         This method uses the Radiobutton method of Tk class to create the radio buttons.
         Scraping is done using BeautifulSoup
         """
-
-        master = self.master
-        master.title("Select any one")
+        master=Tk()
+        #master = Toplevel(root)
+        #master.withdraw()
+        #master.title("Choose one")
         url = "https://www.youtube.com/results?search_query=" + self.name
         r = requests.get(url)
         soup = BeautifulSoup(r.content, "lxml")
-        a = soup.find_all("a", class_="yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2 yt-uix-sessionlink spf-link ")
+        a = soup.find_all("h3", class_="yt-lockup-title ")
+        vids=[]
 
         for v in a:
-            self.vids.append(v["title"])
-            self.urls.append("https://www.youtube.com" + v["href"])
+            nam = v.get_text()
+            if (nam.find("Duration") > -1):
+                vids.append(nam)
+                self.vid_urls.append("https://www.youtube.com" + v.a["href"])
+            else:
+                self.playlists.append(nam[:-11])
+                self.pl_urls.append("https://www.youtube.com" + v.a["href"])
 
-        l = Label(master, text="Choose one of the following:", font=("Times", "20", "italic"))
+        n = ttk.Notebook(master)
+        n.grid(row=0, columnspan=20, rowspan=20)
+        f1 = ttk.Frame(n)  # first page, which would get widgets gridded into it
+        f2 = ttk.Frame(n)  # second page
+        n.add(f1, text='Videos')
+        n.add(f2, text='Playlists')
+
+        self.opt1 = IntVar(master)
+        self.opt2 = IntVar(master)
+
+        #video:-
+        l = Label(f1, text="Choose one of the following:", font=("Times", "20", "italic"))
         l.grid(row=0)
-        i = 1   # i :- row number
-        for v in self.vids:
-            Radiobutton(master, text=v, variable=self.opt, value=i).grid(row=i, sticky=W)
+        i = 1  # i :- row number
+        for v in vids:
+            Radiobutton(f1, text=v, variable=self.opt1, value=i).grid(row=i, sticky=W)
             i += 1
-        b = Button(text="OKAY", command=lambda: self.get_res(master), font=("Times", "20", "bold italic"))
+        b = Button(f1, text="OKAY", command=lambda: self.get_res(master), font=("Times", "20", "bold italic"))
+        b.grid(row=i)
+
+        #playlist:-
+        l = Label(f2, text="Choose one of the following:", font=("Times", "20", "italic"))
+        l.grid(row=0)
+        i = 1  # i :- row number
+        for v in self.playlists:
+            Radiobutton(f2, text=v, variable=self.opt2, value=i).grid(row=i, sticky=W)
+            i += 1
+        b = Button(f2, text="OKAY", command=lambda: self.get_playlist(master), font=("Times", "20", "bold italic"))
         b.grid(row=i)
         master.mainloop()
 
@@ -64,14 +94,14 @@ class GetByName:
         This method again uses the Radiobutton method of Tk class to create the radio buttons.
         Scraping is done using BeautifulSoup
         """
-
         master.destroy()
-        self.vid_url = self.urls[self.opt.get() - 1]        # -1 because of 0-based indexing
+        self.opt2.set(-1)
+        self.vid_url = self.vid_urls[self.opt1.get() - 1]  # -1 because of 0-based indexing
         yt = YouTube(self.vid_url)
         resolutions = yt.get_videos()
 
         root = Tk()
-        self.res = StringVar()
+        self.res = StringVar(root)
         l = Label(root, text="Choose resolution:", font=("Times", "20", "italic"))
         b = Button(root, text="Download", command=lambda: root.destroy(), font=("Times", "20", "bold italic"))
 
@@ -85,15 +115,8 @@ class GetByName:
         b.grid(row=r_num)
         root.mainloop()
 
+    def get_playlist(self,master):
 
-def main():
-    """Starting poinnt of the program."""
+        master.destroy()
+        self.pl_url = self.pl_urls[self.opt2.get()-1]
 
-    obj = GetByName("lean on", "/")
-    obj.get_vids()
-    obj.get_res()
-
-
-if __name__ == "__main__":
-
-    main()

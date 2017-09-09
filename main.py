@@ -6,6 +6,8 @@ import re
 import threading
 import os
 import time
+import requests
+from bs4 import BeautifulSoup
 
 from pytube import YouTube
 
@@ -53,7 +55,6 @@ class DownloadThread(threading.Thread):
             os._exit(0)
 
 
-
 def main():
     """Starting point of the program.
 
@@ -73,13 +74,36 @@ def main():
 
         obj = name.GetByName(gui_obj.vid.get(), gui_obj.dow_loc)
         obj.get_vids()
-        download(obj)
 
+        if obj.opt2.get() == -1:
+            download(obj)
+
+        else:
+            r=requests.get(obj.pl_url)
+            soup = BeautifulSoup(r.content)
+            v = soup.find_all("li" , class_="yt-uix-scroller-scroll-unit  vve-check")
+            for vid in v:
+                v_name = v["data-video-title"]
+                url = "https://www.youtube.com/watch?v=" + v["data-video-id"]
+                down_onebyone(v_name , url, gui_obj.dow_loc)
     else:
 
         obj = url.GetByUrl(gui_obj.vid.get(), gui_obj.dow_loc)
         obj.get_res()
         download(obj)
+
+def down_onebyone(v_name , url, dow_loc):
+
+    download_thread = DownloadThread(url, dow_loc, "360p", "mp4")
+    download_thread.start()
+
+    root = Tk()
+    root.title("Downloading " + v_name[2:])
+    pb = ttk.Progressbar(root, orient='horizontal', length=300, mode='indeterminate')
+    pb.grid(row=0)
+    pb.start()  # starts the progress bar
+    Button(text="Cancel", command=lambda: os._exit(0)).grid(row=1)
+    root.mainloop()
 
 
 def download(obj):
@@ -102,9 +126,8 @@ def download(obj):
     pb = ttk.Progressbar(root, orient='horizontal', length=300, mode='indeterminate')
     pb.grid(row=0)
     pb.start()  # starts the progress bar
-    Button(text="Cancel", command= lambda :os._exit(0)).grid(row=1)
+    Button(text="Cancel", command=lambda: os._exit(0)).grid(row=1)
     root.mainloop()
-
 
 def show_noti(filename):
     """Displays a desktop notification when video download is complete.
