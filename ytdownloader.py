@@ -29,7 +29,7 @@ class Gui:
         master = self.master
         master.title("Enter options")
         self.vid = StringVar()
-        option_list = ("Name", "URL")
+        option_list = ("Name")
         self.mode.set("Name")
 
         label1 = Label(master, text="Search by: ", font=("Times", "24", "italic"))
