@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import filedialog
-
+import sys
 
 class Gui:
     """Creates the first window, to accept mode of search.
@@ -35,6 +35,7 @@ class Gui:
         label1 = Label(master, text="Search by: ", font=("Times", "24", "italic"))
         option = OptionMenu(master, self.mode, *option_list)
         okay = Button(master, text="Okay", command=master.destroy, font=("Times", "20", "bold italic"))
+        cancel = Button(master, text="Cancel", command=lambda : sys.exit(0), font=("Times", "20", "bold italic"))
         label2 = Label(master, text="Download location:", font=("Times", "24", "italic"))
         label3 = Label(master, text="Video name / URL: ", font=("Times", "24", "italic"))
         tex_input = Entry(master, textvariable=self.vid, font=("Times", "20"))
@@ -49,7 +50,8 @@ class Gui:
         label3.grid(row=2)
         self.loc_disp.grid(row=1, column=1)
         tex_input.grid(row=2, column=1, sticky=W)
-        okay.grid(columnspan=3)
+        okay.grid(row=3, column=0)
+        cancel.grid(row=3, column=1)
 
     def get_loc(self):
         """Creates the window for selecting download directory using filedialog module."""

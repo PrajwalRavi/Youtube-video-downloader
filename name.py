@@ -3,8 +3,8 @@ from tkinter import ttk
 from pytube import YouTube
 import requests
 from bs4 import BeautifulSoup
-import time
-
+import sys
+import multiprocessing
 
 
 class GetByName:
@@ -18,6 +18,18 @@ class GetByName:
         vids: List of all video names scraped from YouTube search results
         urls:  List of all corresponding video URLs scraped from YouTube search results
     """
+
+    @staticmethod
+    def p_bar():
+
+        title = "Loading"
+        root = Tk()
+        root.title(title)
+        pb = ttk.Progressbar(root, orient='horizontal', length=300, mode='indeterminate')
+        pb.grid(row=0)
+        pb.start()  # starts the progress bar
+        Button(root, text="Cancel", command = lambda: sys.exit(0)).grid(row=1)
+        root.mainloop()
 
     def __init__(self, name, location):
         """Initializes all the instance variables."""
@@ -39,25 +51,25 @@ class GetByName:
         This method uses the Radiobutton method of Tk class to create the radio buttons.
         Scraping is done using BeautifulSoup
         """
-        master=Tk()
-        #master = Toplevel(root)
-        #master.withdraw()
-        #master.title("Choose one")
+
+        #pb_bar = multiprocessing.Process(target = GetByName.p_bar)
+        #pb_bar.start()
         url = "https://www.youtube.com/results?search_query=" + self.name
         r = requests.get(url)
         soup = BeautifulSoup(r.content, "lxml")
         a = soup.find_all("h3", class_="yt-lockup-title ")
-        vids=[]
-
+        vids = []
         for v in a:
             nam = v.get_text()
-            if (nam.find("Duration") > -1):
+            if nam.find("Duration") > -1:
                 vids.append(nam)
                 self.vid_urls.append("https://www.youtube.com" + v.a["href"])
             else:
                 self.playlists.append(nam[:-11])
                 self.pl_urls.append("https://www.youtube.com" + v.a["href"])
+        #pb_bar.terminate()
 
+        master = Tk()
         n = ttk.Notebook(master)
         n.grid(row=0, columnspan=20, rowspan=20)
         f1 = ttk.Frame(n)  # first page, which would get widgets gridded into it
@@ -68,7 +80,7 @@ class GetByName:
         self.opt1 = IntVar(master)
         self.opt2 = IntVar(master)
 
-        #video:-
+        # video:-
         l = Label(f1, text="Choose one of the following:", font=("Times", "20", "italic"))
         l.grid(row=0)
         i = 1  # i :- row number
@@ -78,7 +90,7 @@ class GetByName:
         b = Button(f1, text="OKAY", command=lambda: self.get_res(master), font=("Times", "20", "bold italic"))
         b.grid(row=i)
 
-        #playlist:-
+        # playlist:-
         l = Label(f2, text="Choose one of the following:", font=("Times", "20", "italic"))
         l.grid(row=0)
         i = 1  # i :- row number
@@ -88,6 +100,7 @@ class GetByName:
         b = Button(f2, text="OKAY", command=lambda: self.get_playlist(master), font=("Times", "20", "bold italic"))
         b.grid(row=i)
         master.mainloop()
+
 
     def get_res(self, master):
         """Scrapes the YouTube search results(based in user's query), extracts the video URLs from them and stores them

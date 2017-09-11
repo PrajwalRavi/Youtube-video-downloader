@@ -16,7 +16,20 @@ import name
 import ytdownloader
 
 
-def main():
+def start():
+
+    root = Tk()
+    img = PhotoImage(file="logo.gif")
+    l = Label(root, image=img, height= 200)
+    st = Button(root , text="Start new download", font=("Times", "25", "bold", "italic")  , command = lambda : main(root))
+    cancel = Button(root , text="Cancel", font=("Times", "25", "bold", "italic")  , command = lambda : sys.exit(0))
+    l.pack()
+    st.pack()
+    cancel.pack()
+    root.mainloop()
+
+
+def main(master):
     """Starting point of the program.
 
     First creates a window to get users choice on searching video based on URL or name and accepts URL/name and download
@@ -26,6 +39,7 @@ def main():
      and format. After this, the video download begins ny invoking download() function.
     """
 
+    master.destroy()
     root1 = Tk()
     gui_obj = ytdownloader.Gui(root1)
     gui_obj.get_mode()
@@ -35,6 +49,9 @@ def main():
 
         obj = name.GetByName(gui_obj.vid.get(), gui_obj.dow_loc.get())
         obj.get_vids()
+
+        #pb_bar = multiprocessing.Process(target=p_bar)
+        #pb_bar.start()
 
         if obj.opt2.get() == -1:
             download(obj)
@@ -47,6 +64,10 @@ def main():
                 print(vid["data-video-id"])
                 url = "https://www.youtube.com/watch?v=" + vid["data-video-id"]
                 down_onebyone(url, gui_obj.dow_loc.get())
+
+        #pb_bar.terminate()
+        #start()
+
     else:
         obj = url.GetByUrl(gui_obj.vid.get(), gui_obj.dow_loc)
         obj.get_res()
@@ -60,7 +81,7 @@ def p_bar():
     pb = ttk.Progressbar(root, orient='horizontal', length=300, mode='indeterminate')
     pb.grid(row=0)
     pb.start()  # starts the progress bar
-    Button(text="Cancel", command=lambda: os._exit(0)).grid(row=1)
+    Button(root, text="Cancel", command=lambda: os._exit(0)).grid(row=1)
     root.mainloop()
 
 def down_onebyone(url, dow_loc):
@@ -71,20 +92,16 @@ def down_onebyone(url, dow_loc):
     :return: None
     """
 
-    pb_bar = multiprocessing.Process(target=p_bar)
-    pb_bar.start()
-
     yt = YouTube(url)
     video = yt.get("mp4", "360p")  # format can be changed as needed
     try:
         video.download(dow_loc)
         show_noti(yt.filename)
         time.sleep(0.5)  # required so that program does not exit before displaying the desktop notification.
-        os._exit(0)  # exits the whole program.
 
     except OSError:
-        messagebox.showerror("Error", "Video already present in the folder.")
-        pb_bar.terminate()
+        messagebox.showerror("Error", "1 Video already present in the folder.")
+
 
 def download(obj):
     """Extracts the resolution and format of the specified video.
@@ -106,9 +123,9 @@ def download(obj):
     try:
         video.download(obj.dow_loc)
         show_noti(yt.filename)
-        time.sleep(0.3)  # required so that program does not exit before displaying the desktop notification.
+        time.sleep(0.1)  # required so that program does not exit before displaying the desktop notification.
         pb_bar.terminate()
-        os._exit(0)  # exits the whole program.
+        #start()  # starts the whole program again.
 
     except OSError:
         messagebox.showerror("Error", "Video already present in the folder.")
@@ -127,4 +144,4 @@ def show_noti(filename):
 
 
 if __name__ == "__main__":
-    main()
+    start()
